@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
 
+set -x
+
+get_platform() {
+  [ "Linux" = "$(uname)" ] && echo "linux64" || echo "osx-amd64"
+}
+
+# stolen from https://github.com/rbenv/ruby-build/pull/631/files#diff-fdcfb8a18714b33b07529b7d02b54f1dR942
+sort_versions() {
+  sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' | \
+    LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
+}
+
 releases_path=https://api.github.com/repos/kubernetes/helm/releases
 cmd="curl -s"
 if [ -n "$OAUTH_TOKEN" ]; then
@@ -7,12 +19,12 @@ if [ -n "$OAUTH_TOKEN" ]; then
 fi
 cmd="$cmd $releases_path"
 
-# stolen from https://github.com/rbenv/ruby-build/pull/631/files#diff-fdcfb8a18714b33b07529b7d02b54f1dR942
-function sort_versions() {
-  sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' | \
-    LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
-}
+# need jq; download portable version if not installed
+if [ -z "$(command -v jq)" ]; then
+  curl -L -s "https://github.com/stedolan/jq/releases/download/jq-1.5/jq-$(get_platform)" -o jq
+  chmod +x jq
+fi
 
-# Fetch all tag names, and get only second column. Then remove all unnecesary characters.
-versions=$(eval $cmd | grep -oE "tag_name\": \".{1,15}\"," | sed 's/tag_name\": \"v//;s/\",//' | sort_versions)
+# fetch all tag names
+versions=$(eval $cmd | jq -r '.[].tag_name' | sort_versions)
 echo $versions
