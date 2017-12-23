@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -x
+set -e
+# set -x
 
 get_platform() {
   [ "Linux" = "$(uname)" ] && echo "linux64" || echo "osx-amd64"
@@ -26,5 +27,6 @@ if [ -z "$(command -v jq)" ]; then
 fi
 
 # fetch all tag names
-versions=$(eval $cmd | jq -r '.[].tag_name' | sort_versions)
+# want just the version numbers, no "v" in front
+versions=$(eval $cmd | jq -r '.[].tag_name' | cut -c2- | sort_versions)
 echo $versions
