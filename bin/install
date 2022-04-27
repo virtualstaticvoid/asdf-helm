@@ -29,7 +29,26 @@ get_platform() {
 }
 
 get_arch() {
-  [ "x86_64" = "$(uname -m)" ] && echo "amd64" || echo "386"
+  local arch=$(uname -m)
+  case $arch in
+    amd64 | x86_64)
+      echo "amd64"
+      ;;
+    arm64)
+      echo "arm64"
+      ;;
+    i386 | i686)
+      echo "386"
+      ;;
+    ppc64le)
+      echo "ppc64le"
+      ;;
+    s390 | s390x)
+      echo "s390x"
+      ;;
+    *)
+      echo ""
+  esac
 }
 
 get_download_url() {
