@@ -2,7 +2,7 @@
 
 set -eo pipefail
 
-repo=kubernetes/helm
+repo=helm/helm
 
 cmd="curl --silent --location"
 releases_path="https://api.github.com/repos/$repo/releases"

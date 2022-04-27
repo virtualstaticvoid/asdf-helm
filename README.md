@@ -14,4 +14,5 @@ asdf plugin-add helm https://github.com/virtualstaticvoid/asdf-helm.git
 
 Check [asdf](https://github.com/asdf-vm/asdf) readme for instructions on how to install & manage versions of helm.
 
-[util]: https://helm.sh
+[util]: https://github.com/helm/helm
+[releases]: https://github.com/helm/helm/releases
