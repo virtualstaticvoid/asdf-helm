@@ -8,6 +8,7 @@
 
 ```
 asdf plugin-add helm https://github.com/virtualstaticvoid/asdf-helm.git
+asdf install helm latest
 ```
 
 ## Use
